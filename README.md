@@ -19,26 +19,26 @@ Inspired by
 
 1. Install [Speedtest-Cli](https://github.com/sivel/speedtest-cli)
 
- ```bash
-curl -Lo /usr/bin/speedtest-cli https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py
-chmod +x /usr/bin/speedtest-cli
-```
+	```bash
+	curl -Lo /usr/bin/speedtest-cli https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py
+	chmod +x /usr/bin/speedtest-cli
+	```
 
 1. Download `speedtest-zabbix.sh`
 
- ```bash
-mkdir -p /etc/zabbix/scripts
-cd /etc/zabbix/scripts
-curl -LO https://raw.githubusercontent.com/sebastian13/zabbix-templates/master/speedtest/scripts/speedtest-zabbix.sh
-chmod +x speedtest-zabbix.sh
-```
+	```bash
+	mkdir -p /etc/zabbix/scripts
+	cd /etc/zabbix/scripts
+	curl -LO https://raw.githubusercontent.com/sebastian13/zabbix-templates/master/speedtest/scripts/speedtest-zabbix.sh
+	chmod +x speedtest-zabbix.sh
+	```
 
 1. Create Cron
 
- ```bash
-curl -Lo /etc/cron.d/speedtest-zabbix https://raw.githubusercontent.com/sebastian13/zabbix-templates/master/speedtest/speedtest-zabbix.cron
-service cron reload
-```
+	```bash
+	curl -Lo /etc/cron.d/speedtest-zabbix https://raw.githubusercontent.com/sebastian13/zabbix-templates/master/speedtest/speedtest-zabbix.cron
+	service cron reload
+	```
 
 1. Import the Template `zbx_template_speedtest.xml` to Zabbix and assign in to a server.
  https://raw.githubusercontent.com/sebastian13/zabbix-templates/master/speedtest/zbx_template_speedtest.xml
