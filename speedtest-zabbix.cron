@@ -1,0 +1,1 @@
+32 * * * * zabbix /etc/zabbix/scripts/speedtest-zabbix.sh
