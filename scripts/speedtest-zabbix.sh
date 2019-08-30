@@ -3,12 +3,22 @@ set -e
 
 CACHE_FILE=/tmp/speedtest.tmp
 ZABBIX_DATA=/tmp/speedtest-zabbix.tmp
+LOG_FILE=/var/log/zabbix/speedtest.log
+
+# Create logfile
+touch $LOG_FILE
+chown zabbix:zabbix $LOG_FILE
+chmod 640 $LOG_FILE
+echo | tee -a $LOG_FILE
+echo "$(date +%F-%T)" | tee -a $LOG_FILE
 
 # Randomly choose one of the 10 closest servers
 ID=$(/usr/bin/speedtest-cli --list | head -n 11 | tail -n +2 | cut -f 1 -d ")" | shuf -n1)
 
 # Gather data
-/usr/bin/speedtest-cli --server $ID --csv > $CACHE_FILE
+echo "Running Speedtest"
+/usr/bin/speedtest-cli --server $ID --csv > $CACHE_FILE \
+	| tee -a $LOG_FILE
 
 # Extract fields
 output=$(cat $CACHE_FILE)
@@ -20,6 +30,9 @@ output=$(cat $CACHE_FILE)
     DL=$(echo "$output" | cut -f7 -d ',')
     UP=$(echo "$output" | cut -f8 -d ',')
 
+# Print some results
+echo "ping: $PING, down: $DL, up: $UP, server: $SRV_NAME" | tee -a $LOG_FILE
+
 # Summarize Data for Zabbix
  echo "-" speedtest.download $DL >> $ZABBIX_DATA 
  echo "-" speedtest.upload $UP >> $ZABBIX_DATA 
@@ -30,4 +43,9 @@ output=$(cat $CACHE_FILE)
  echo "-" speedtest.srv.km $SRV_KM >> $ZABBIX_DATA
 
 # Send data to Zabbix
-/usr/bin/zabbix_sender --config /etc/zabbix/zabbix_agentd.conf -i $ZABBIX_DATA
+echo "Sending Data to Zabbix"
+/usr/bin/zabbix_sender --config /etc/zabbix/zabbix_agentd.conf -i $ZABBIX_DATA \
+	| tee -a $LOG_FILE
+
+# Clean data
+rm $CACHE_FILE $ZABBIX_DATA
