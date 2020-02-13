@@ -1,1 +1,1 @@
-32 * * * * zabbix /etc/zabbix/scripts/speedtest-zabbix.sh
+32 * * * * zabbix /etc/zabbix/scripts/speedtest-zabbix.sh >/dev/null
