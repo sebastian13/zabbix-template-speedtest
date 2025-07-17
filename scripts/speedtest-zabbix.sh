@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-CACHE_FILE=/tmp/speedtest.tmp
+#CACHE_FILE=/tmp/speedtest.tmp
 ZABBIX_DATA=/tmp/speedtest-zabbix.tmp
 LOG_FILE=/var/log/zabbix/speedtest.log
 
@@ -17,18 +17,16 @@ ID=$(/usr/bin/speedtest-cli --list | head -n 11 | tail -n +2 | cut -f 1 -d ")" |
 
 # Gather data
 echo "Running Speedtest"
-/usr/bin/speedtest-cli --server $ID --csv > $CACHE_FILE \
-	| tee -a $LOG_FILE
+json_data=$(/usr/bin/speedtest-cli --server $ID --json)
 
-# Extract fields
-output=$(cat $CACHE_FILE)
-    WAN_IP=$(echo "$output" | cut -f10 -d ',')
-    PING=$(echo "$output" | cut -f6 -d ',')
-    SRV_NAME=$(echo "$output" | cut -f2 -d ',')
-    SRV_CITY=$(echo "$output" | cut -f3 -d ',')
-    SRV_KM=$(echo "$output" | cut -f5 -d ',' | cut -b1-5)
-    DL=$(echo "$output" | cut -f7 -d ',')
-    UP=$(echo "$output" | cut -f8 -d ',')
+# Extract values using jq and eval
+SRV_NAME=$(echo "$json_data" | jq -r '.server.sponsor')
+DL=$(echo "$json_data" | jq -r '.download')
+UP=$(echo "$json_data" | jq -r '.upload')
+PING=$(echo "$json_data" | jq -r '.ping')
+SRV_KM=$(echo "$json_data" | jq -r '.server.d')
+SRV_CITY=$(echo "$json_data" | jq -r '.server.name')
+WAN_IP=$(echo "$json_data" | jq -r '.client.ip')
 
 # Print some results
 echo "ping: $PING, down: $DL, up: $UP, server: $SRV_NAME" | tee -a $LOG_FILE
@@ -45,7 +43,7 @@ echo "ping: $PING, down: $DL, up: $UP, server: $SRV_NAME" | tee -a $LOG_FILE
 # Send data to Zabbix
 echo "Sending Data to Zabbix"
 /usr/bin/zabbix_sender --config /etc/zabbix/zabbix_agentd.conf -i $ZABBIX_DATA \
-	| tee -a $LOG_FILE
+        | tee -a $LOG_FILE
 
 # Clean data
-rm $CACHE_FILE $ZABBIX_DATA
+rm $ZABBIX_DATA
