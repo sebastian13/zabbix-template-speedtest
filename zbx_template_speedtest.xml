@@ -201,7 +201,7 @@ It uses `zabbix_sender` to send the values to a Zabbix Server. The interval is s
     <graphs>
         <graph>
             <uuid>b1ba1ae2f6174e369000e275d4db9f23</uuid>
-            <name>Speedtest ® Upload vs Download Bandwidth 2</name>
+            <name>Speedtest ® Upload vs Download Bandwidth</name>
             <show_work_period>NO</show_work_period>
             <show_triggers>NO</show_triggers>
             <graph_items>
