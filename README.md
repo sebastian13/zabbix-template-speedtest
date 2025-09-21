@@ -1,11 +1,6 @@
 # Zabbix Template: Speedtest
 
-Monitoring internet bandwidth using speedtest and zabbix. The script uses `zabbix_sender` to send the values to a Zabbix Server. The interval is set via cron. To get different results the script will randomly choose one of the 10 closest servers each runtime.
-
-Inspired by
-
-- https://git.cdp.li/polcape/zabbix/tree/master/zabbix-speedtest
-- https://github.com/sk3pp3r/speedtest2zabbix
+Monitoring internet bandwidth using speedtest and zabbix. The script uses `zabbix_sender` to send the values to a Zabbix Server. The interval is set via cron. By default, it uses the server selected by Ookla's speedtest cli. In addition, you can provide a City or a specific Sever-ID.
 
 ## Screenshots
 ### Gathered Data
@@ -15,13 +10,31 @@ Inspired by
 ![Triggers](screenshots/graph-up-down.png)
 
 
+## Requirements
+- Zabbix server (tested with Zabbix 7.0 LTS)
+- Speedtest CLI (by Ookla)
+- curl, jq, awk, zabbix_sender
+- Debian 12+
+
+## Script Options
+- `--city <City>`: Use a Speedtest server located in the specified city.
+- `--server-id <ID>`: Use a specific Speedtest server by ID.
+
 ## How to Use
 
-1. Install [Speedtest-Cli](https://github.com/sivel/speedtest-cli)
+1. Install [Speedtest® CLI](https://www.speedtest.net/apps/cli)
 
 	```bash
-	curl -Lo /usr/bin/speedtest-cli https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py
-	chmod +x /usr/bin/speedtest-cli
+	## If migrating from prior bintray install instructions please first...
+	# sudo rm /etc/apt/sources.list.d/speedtest.list
+	# sudo apt-get update
+	# sudo apt-get remove speedtest
+	## Other non-official binaries will conflict with Speedtest CLI
+	# Example how to remove using apt-get
+	# sudo apt-get remove speedtest-cli
+	sudo apt-get install curl
+	curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | sudo bash
+	sudo apt-get install speedtest
 	```
 
 1. Download `speedtest-zabbix.sh`
@@ -45,4 +58,10 @@ Inspired by
 ### Additional Resources
 
 - [Manpage: Zabbix Sender](https://www.zabbix.com/documentation/current/manpages/zabbix_sender)
-- [Usage: Speedtest-CLI](https://github.com/sivel/speedtest-cli)
+- [List of Speedtest Server](https://gist.github.com/ofou/654efe67e173a6bff5c64ba26c09d058)
+- [Query the Speedtest API](https://stackoverflow.com/a/77814522/8940679)
+
+Inspired by
+
+- https://git.cdp.li/polcape/zabbix/tree/master/zabbix-speedtest
+- https://github.com/sk3pp3r/speedtest2zabbix
