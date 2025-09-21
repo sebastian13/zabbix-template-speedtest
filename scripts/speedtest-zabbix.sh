@@ -1,5 +1,9 @@
 #!/bin/bash
-
+#
+# Author: Sebastian Plocek
+# GitHub: https://github.com/sebastian13/zabbix-template-speedtest
+# License: MIT
+#
 # This script runs a Speedtest and sends the results to Zabbix
 # It supports optional parameters --city and --server-id:
 #   - if --city is provided, it fetches server IDs for that city using the Speedtest.net API
@@ -119,7 +123,7 @@ cat <<EOF >> "$ZABBIX_DATA"
 - speedtest.wan.ip $TS_EPOCH $WAN_IP
 - speedtest.download $TS_EPOCH $DL_BPS
 - speedtest.upload $TS_EPOCH $UP_BPS
-- speedtest.ping $TS_EPOCH $PING
+- speedtest.ping $TS_EPOCH $PING_MS
 - speedtest.packetloss $TS_EPOCH $PLOSS
 EOF
 
